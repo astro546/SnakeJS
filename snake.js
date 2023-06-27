@@ -2,6 +2,7 @@
 const cellSize = 25; //Tamaño de las casillas del tablero
 const FPS = 1000 / 10; //El juego corre a 15 FPS
 let lastFrame = 0; //Ultimo frame
+let gameOver = false; //Variable que guarda el estado del juego
 
 //Objeto que guarda los estados de las teclas
 const keyState = {
@@ -88,7 +89,7 @@ class Snake {
     }
   }
 
-  // Accion de comer de la serpierte
+  // Accion de comer de la serpiente
   eat(ctx, food) {
     const head = this.snakeBoxes.slice(-1)[0];
     const foodX = food['x'] / cellSize;
@@ -115,15 +116,21 @@ class Snake {
     const head = this.snakeBoxes.slice(-1)[0];
     const snakeBody = this.snakeBoxes.slice(0, -1);
 
+    // Verifica si la serpiente se salio del canvas
     if (head.x >= 23 || head.y >= 23 || head.x < 0 || head.y < 0) {
       console.log('Game Over');
-      return;
+      showGameOver();
+      return true;
     }
+
+    // Verifica si la serpiente se toco a si misma
     for (let snakeBox of snakeBody) {
       if (head.x === snakeBox.x && head.y === snakeBox.y) {
         console.log('Game Over');
+        return true;
       }
     }
+    return false;
   }
 
   // Mueve la serpiente en pantalla
@@ -134,10 +141,12 @@ class Snake {
 
     // Checa si a pasado el suficiente tiempo para renderizar el frame
     if (deltaTime > FPS) {
-      this.gameOver();
-      this.eat(ctx, food);
-      this.updateSnake(ctx);
-      this.drawSnake(ctx);
+      gameOver = this.gameOver();
+      if (!gameOver) {
+        this.eat(ctx, food);
+        this.updateSnake(ctx);
+        this.drawSnake(ctx);
+      }
 
       // Actualiza el tiempo del ultimo frame
       lastFrame = timestamp - (deltaTime % FPS);
@@ -188,7 +197,7 @@ Food.prototype.spawn = function (ctx, snakeBoxes) {
   drawBox(ctx, 'red', this.x, this.y);
 };
 
-// ----------------------------- TABLERO --------------------------------------------
+// ----------------------------- TABLERO Y VENTANA DEL JUEGO --------------------------------------------
 // Colorea una casilla del tablero
 function drawBox(ctx, color, x, y) {
   ctx.fillStyle = color;
@@ -207,24 +216,65 @@ function drawBoard(ctx) {
   }
 }
 
-// ------------------  Imprime el cuadro cuando el DOM este listo -----------------
-document.addEventListener('DOMContentLoaded', () => {
-  const board = document.querySelector('#snake-board');
-  const ctx = board.getContext('2d');
+// Empieza el juego
+function startGame(board, ctx) {
   board.height = 575;
   board.width = 575;
   drawBoard(ctx);
   const apple = new Food();
   const snake = new Snake();
-
-  window.addEventListener('keydown', (e) => {
-    keyState[e.key] = true;
-  });
-  window.addEventListener('keyup', (e) => {
-    keyState[e.key] = false;
-  });
-
   apple.spawn(ctx, snake.snakeBoxes);
   snake.drawSnake(ctx);
   snake.moveSnake(ctx, apple);
+}
+
+// Reinicia el juego
+function restart(divGameOver) {
+  divGameOver.remove();
+  const divBoard = document.createElement('div');
+  const score = document.createElement('h3');
+  const board = document.createElement('canvas');
+  const ctx = board.getContext('2d');
+
+  divBoard.id = 'canvas-container';
+  score.innerHTML = `Puntuacion: <span>0</span>`;
+  board.id = 'snake-board';
+  divBoard.appendChild(score);
+  divBoard.appendChild(board);
+  document.body.appendChild(divBoard);
+  startGame(board, ctx);
+}
+
+// Muestra la alerta de Game Over
+function showGameOver() {
+  const canvas = document.querySelector('#canvas-container');
+  const divGameOver = document.createElement('div');
+  divGameOver.id = 'game-over';
+  divGameOver.innerHTML = `
+    <h2>Perdiste!!</h2>
+    <h3>Puntuacion: 0</h3>
+    <button>
+      <i class="fa-solid fa-rotate-left"></i>
+    </button>
+  `;
+  canvas.remove();
+  document.body.appendChild(divGameOver);
+
+  const btnRestart = divGameOver.querySelector('button');
+  btnRestart.onclick = () => restart(divGameOver);
+}
+
+// Eventos para el teclado
+window.addEventListener('keydown', (e) => {
+  keyState[e.key] = true;
+});
+window.addEventListener('keyup', (e) => {
+  keyState[e.key] = false;
+});
+
+// ------------------  Imprime el cuadro cuando el DOM este listo -----------------
+document.addEventListener('DOMContentLoaded', () => {
+  const board = document.querySelector('#snake-board');
+  const ctx = board.getContext('2d');
+  startGame(board, ctx);
 });

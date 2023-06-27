@@ -20,8 +20,15 @@ body {
 }
 
 h1,
+h2,
 h3 {
   text-align: center;
+}
+
+h3,
+h2 {
+  font-size: 2rem;
+  color: white;
 }
 
 h1 {
@@ -29,9 +36,8 @@ h1 {
   margin-bottom: 4rem;
 }
 
-h3 {
-  font-size: 2rem;
-  color: white;
+h2 {
+  font-size: 4rem;
 }
 
 #canvas-container {
@@ -41,4 +47,34 @@ h3 {
   background-color: green;
   border-radius: 1rem;
   padding: 1rem;
+}
+
+#game-over {
+  width: 31rem;
+  height: 28rem;
+  margin: auto;
+  background-color: #0082b9;
+  border-radius: 3rem;
+}
+
+#game-over h2 {
+  padding-top: 4rem;
+}
+
+#game-over button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 5rem;
+  border: none;
+  padding: 3.5rem;
+  border-radius: 50%;
+  width: 5.6rem;
+  height: 5.6rem;
+  margin: auto;
+  margin-top: 3rem;
+}
+
+#game-over button i {
+  color: #3c6eb1;
 }
