@@ -110,6 +110,22 @@ class Snake {
     }
   }
 
+  // Verifica si la serpiente se a tocado a si misma o se a salido del canvas
+  gameOver() {
+    const head = this.snakeBoxes.slice(-1)[0];
+    const snakeBody = this.snakeBoxes.slice(0, -1);
+
+    if (head.x >= 23 || head.y >= 23 || head.x < 0 || head.y < 0) {
+      console.log('Game Over');
+      return;
+    }
+    for (let snakeBox of snakeBody) {
+      if (head.x === snakeBox.x && head.y === snakeBox.y) {
+        console.log('Game Over');
+      }
+    }
+  }
+
   // Mueve la serpiente en pantalla
   moveSnake = (ctx, food, timestamp) => {
     this.keyPressed();
@@ -118,6 +134,7 @@ class Snake {
 
     // Checa si a pasado el suficiente tiempo para renderizar el frame
     if (deltaTime > FPS) {
+      this.gameOver();
       this.eat(ctx, food);
       this.updateSnake(ctx);
       this.drawSnake(ctx);

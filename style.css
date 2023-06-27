@@ -4,12 +4,41 @@
   box-sizing: border-box;
 }
 
+html,
+body {
+  height: 100%;
+}
+
 html {
   font-size: 62.5%;
   overflow-x: hidden;
 }
 
+body {
+  font-family: 'Belanosima', sans-serif;
+  background-image: linear-gradient(to bottom right, #00ca6d, #0082b9);
+}
+
+h1,
+h3 {
+  text-align: center;
+}
+
+h1 {
+  font-size: 5rem;
+  margin-bottom: 4rem;
+}
+
+h3 {
+  font-size: 2rem;
+  color: white;
+}
+
 #canvas-container {
-  display: flex;
-  justify-content: center;
+  width: 59.5rem;
+  height: auto;
+  margin: 0 auto;
+  background-color: green;
+  border-radius: 1rem;
+  padding: 1rem;
 }
