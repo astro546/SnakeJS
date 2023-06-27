@@ -3,6 +3,7 @@ const cellSize = 25; //Tamaño de las casillas del tablero
 const FPS = 1000 / 10; //El juego corre a 15 FPS
 let lastFrame = 0; //Ultimo frame
 let gameOver = false; //Variable que guarda el estado del juego
+let snakeScore = 0;
 
 //Objeto que guarda los estados de las teclas
 const keyState = {
@@ -100,6 +101,9 @@ class Snake {
       const y = tail['y'] - this.dy;
       this.snakeBoxes.unshift({ x, y });
       food.spawn(ctx, this.snakeBoxes);
+      snakeScore++;
+      const scoreNumber = document.querySelector('span');
+      scoreNumber.textContent = `${snakeScore}`;
     }
 
     const imageData = ctx.getImageData(food.x, food.y, cellSize, cellSize);
@@ -127,6 +131,7 @@ class Snake {
     for (let snakeBox of snakeBody) {
       if (head.x === snakeBox.x && head.y === snakeBox.y) {
         console.log('Game Over');
+        showGameOver();
         return true;
       }
     }
@@ -242,6 +247,7 @@ function restart(divGameOver) {
   divBoard.appendChild(score);
   divBoard.appendChild(board);
   document.body.appendChild(divBoard);
+  snakeScore = 0;
   startGame(board, ctx);
 }
 
@@ -252,7 +258,7 @@ function showGameOver() {
   divGameOver.id = 'game-over';
   divGameOver.innerHTML = `
     <h2>Perdiste!!</h2>
-    <h3>Puntuacion: 0</h3>
+    <h3>Puntuacion: ${snakeScore}</h3>
     <button>
       <i class="fa-solid fa-rotate-left"></i>
     </button>
